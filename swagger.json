@@ -1,0 +1,564 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Viraj's Vision API",
+    "description": "## API to run image detection and annotation for a image",
+    "license": {
+      "name": "NA",
+      "url": "http://198.199.121.111:3002/vision-api-docs/"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://198.199.121.111:3002"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Vision API",
+      "description": "Vision API"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Color": {
+        "description": "Represents a color in the RGB color space. This representation is designed for simplicity",
+        "required": [
+          "x",
+          "y"
+        ],
+        "properties": {
+          "red": {
+            "description": "The amount of red in the color as a value in the interval [0, 255].",
+            "type": "number",
+            "example": 218
+          },
+          "blue": {
+            "description": "The amount of green in the color as a value in the interval [0, 255].",
+            "type": "number",
+            "example": 193
+          },
+          "green": {
+            "description": "The amount of green in the color as a value in the interval [0, 255].",
+            "type": "string",
+            "example": 168
+          }
+        }
+      },
+      "Feature": {
+        "description": "The type of image detection to perform.",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "description": "The feature type. Possible values below.",
+            "type": "string",
+            "enum": [
+              "LABEL_DETECTION",
+              "FACE_DETECTION",
+              "IMAGE_PROPERTIES"
+            ]
+          }
+        }
+      },
+      "Vertex": {
+        "description": "A vertex represents a 2D point in the image. \n\n NOTE: the vertex coordinates are in the same scale as the original image.",
+        "required": [
+          "x",
+          "y"
+        ],
+        "properties": {
+          "x": {
+            "description": "X coordinate.",
+            "type": "number",
+            "format": "integer",
+            "example": 222.62032
+          },
+          "y": {
+            "description": "Y coordinate.",
+            "type": "number",
+            "format": "integer",
+            "example": 135.68814
+          }
+        }
+      },
+      "NormalizedVertex": {
+        "description": "A vertex represents a 2D point in the image. \n\nNOTE: the normalized vertex coordinates are relative to the original image and range from 0 to 1.",
+        "required": [
+          "x",
+          "y"
+        ],
+        "properties": {
+          "x": {
+            "description": "X coordinate.",
+            "type": "number",
+            "format": "integer",
+            "example": 222.62032
+          },
+          "y": {
+            "description": "Y coordinate.",
+            "type": "number",
+            "format": "integer",
+            "example": 135.68814
+          }
+        }
+      },
+      "Position": {
+        "description": "A 3D position in the image, used primarily for Face detection landmarks. A valid Position must have both x and y coordinates. The position coordinates are in the same scale as the original image.",
+        "required": [
+          "x",
+          "y",
+          "z"
+        ],
+        "properties": {
+          "x": {
+            "description": "X coordinate.",
+            "type": "number",
+            "format": "integer",
+            "example": 222.62032
+          },
+          "y": {
+            "description": "Y coordinate.",
+            "type": "number",
+            "format": "integer",
+            "example": 135.68814
+          },
+          "z": {
+            "description": "Z coordinate.",
+            "type": "number",
+            "format": "integer",
+            "example": 0.00029593706
+          }
+        }
+      },
+      "Landmark": {
+        "description": "A face-specific landmark (for example, a face feature).",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "LEFT_EYE"
+          },
+          "position": {
+            "type": "object",
+            "$ref": "#/components/schemas/Position"
+          }
+        }
+      },
+      "FaceAnnotation": {
+        "properties": {
+          "boundingPoly": {
+            "type": "object",
+            "$ref": "#/components/schemas/boundingPoly"
+          },
+          "fdBoundingPoly": {
+            "type": "object",
+            "$ref": "#/components/schemas/fdBoundingPoly"
+          },
+          "landmarks": {
+            "description": "Detected face landmarks.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Landmark"
+            }
+          },
+          "rollAngle": {
+            "description": "Roll angle, which indicates the amount of clockwise/anti-clockwise rotation of the face relative to the image vertical about the axis perpendicular to the face. Range [-180,180].",
+            "type": "number",
+            "format": "float",
+            "example": -6.630813
+          },
+          "panAngle": {
+            "description": "Yaw angle, which indicates the leftward/rightward angle that the face is pointing relative to the vertical plane perpendicular to the image. Range [-180,180].",
+            "type": "number",
+            "format": "float",
+            "example": -6.630813
+          },
+          "tiltAngle": {
+            "description": "Pitch angle, which indicates the upwards/downwards angle that the face is pointing relative to the image's horizontal plane. Range [-180,180].",
+            "type": "number",
+            "format": "float",
+            "example": -6.630813
+          },
+          "detectionConfidence": {
+            "description": "Detection confidence. Range [0, 1].",
+            "type": "number",
+            "format": "float",
+            "example": -6.630813
+          },
+          "landmarkingConfidence": {
+            "description": "Face landmarking confidence. Range [0, 1].",
+            "type": "number",
+            "format": "float",
+            "example": -6.630813
+          },
+          "joyLikelihood": {
+            "description": "Joy likelihood. Possible values are given below.",
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "VERY_UNLIKELY",
+              "UNLIKELY",
+              "POSSIBLE",
+              "LIKELY",
+              "VERY_LIKELY"
+            ]
+          },
+          "sorrowLikelihood": {
+            "description": "Sorrow likelihood. Possible values are given below.",
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "VERY_UNLIKELY",
+              "UNLIKELY",
+              "POSSIBLE",
+              "LIKELY",
+              "VERY_LIKELY"
+            ]
+          },
+          "angerLikelihood": {
+            "description": "Anger likelihood. Possible values are given below.",
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "VERY_UNLIKELY",
+              "UNLIKELY",
+              "POSSIBLE",
+              "LIKELY",
+              "VERY_LIKELY"
+            ]
+          },
+          "surpriseLikelihood": {
+            "description": "Surprise likelihood. Possible values are given below.",
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "VERY_UNLIKELY",
+              "UNLIKELY",
+              "POSSIBLE",
+              "LIKELY",
+              "VERY_LIKELY"
+            ]
+          },
+          "underExposedLikelihood": {
+            "description": "Under-exposed likelihood. Possible values are given below.",
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "VERY_UNLIKELY",
+              "UNLIKELY",
+              "POSSIBLE",
+              "LIKELY",
+              "VERY_LIKELY"
+            ]
+          },
+          "blurredLikelihood": {
+            "description": "Blurred likelihood. Possible values are given below.",
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "VERY_UNLIKELY",
+              "UNLIKELY",
+              "POSSIBLE",
+              "LIKELY",
+              "VERY_LIKELY"
+            ]
+          },
+          "headwearLikelihood": {
+            "description": "Headwear likelihood.",
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "VERY_UNLIKELY",
+              "UNLIKELY",
+              "POSSIBLE",
+              "LIKELY",
+              "VERY_LIKELY"
+            ]
+          }
+        }
+      },
+      "EntityAnnotation": {
+        "properties": {
+          "mid": {
+            "description": "If present, contains a machine-generated identifier (MID) corresponding to the entity's Google Knowledge Graph entry. Note that mid values remain unique across different languages, so you can use these values to tie entities together from different languages.",
+            "type": "string",
+            "example": "/m/019nj4"
+          },
+          "description": {
+            "description": "Entity textual description, expressed in its locale language.",
+            "type": "string",
+            "example": "Smile"
+          },
+          "locale": {
+            "description": "The language code for the locale in which the entity textual description is expressed.",
+            "type": "string",
+            "example": "EN"
+          },
+          "score": {
+            "description": "Overall score of the result. Range [0, 1].",
+            "type": "number",
+            "example": 0.98279893
+          },
+          "topicality": {
+            "description": "The relevancy of the ICA (Image Content Annotation) label to the image. It measures how important/central a label is to the overall context of a page.",
+            "type": "number",
+            "example": 0.98279893
+          }
+        }
+      },
+      "ColorInfo": {
+        "description": "Color information consists of RGB channels, score, and the fraction of the image that the color occupies in the image.",
+        "properties": {
+          "color": {
+            "description": "RGB components of the color.",
+            "type": "object",
+            "$ref": "#/components/schemas/Color"
+          },
+          "score": {
+            "description": "Image-specific score for this color. Value in range [0, 1].",
+            "type": "number",
+            "example": 0.0743989
+          },
+          "pixelFraction": {
+            "description": "The fraction of pixels the color occupies in the image. Value in range [0, 1].",
+            "type": "number",
+            "example": 0.03259804
+          }
+        }
+      },
+      "vertices": {
+        "description": "The bounding polygon vertices.",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Vertex"
+        }
+      },
+      "normalizedVertices": {
+        "description": "The bounding polygon normalized vertices.",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Vertex"
+        }
+      },
+      "boundingPoly": {
+        "description": "The bounding polygon around the face. The coordinates of the bounding box are in the original image's scale. The bounding box is computed to 'frame' the face in accordance with human expectations. It is based on the landmarker results. Note that one or more x and/or y coordinates may not be generated in the BoundingPoly (the polygon will be unbounded) if only a partial face appears in the image to be annotated.",
+        "properties": {
+          "vertices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Vertex"
+            }
+          }
+        }
+      },
+      "fdBoundingPoly": {
+        "description": "The fdBoundingPoly bounding polygon is tighter than the boundingPoly, and encloses only the skin part of the face. Typically, it is used to eliminate the face from any image analysis that detects the 'amount of skin'visible in an image. It is not based on the landmarker results, only on the initial face detection, hence the fd. (face detection) prefix.",
+        "properties": {
+          "vertices": {
+            "type": "object",
+            "$ref": "#/components/schemas/vertices"
+          },
+          "normalizedVertices": {
+            "type": "object",
+            "$ref": "#/components/schemas/normalizedVertices"
+          }
+        }
+      },
+      "landmarks": {
+        "description": "Detected face landmarks.",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Landmark"
+        }
+      },
+      "features": {
+        "description": "Requested image detection features. Multiple features can be requested.",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Feature"
+        }
+      },
+      "colors": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ColorInfo"
+        }
+      },
+      "dominantColors": {
+        "description": "Set of dominant colors and their corresponding scores.",
+        "properties": {
+          "colors": {
+            "description": "RGB color values with their score and pixel fraction.",
+            "type": "object",
+            "$ref": "#/components/schemas/colors"
+          }
+        }
+      },
+      "faceAnnotations": {
+        "description": "A face annotation object contains the results of face detection.",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/FaceAnnotation"
+        }
+      },
+      "labelAnnotations": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/EntityAnnotation"
+        }
+      },
+      "imagePropertiesAnnotation": {
+        "description": "Image properties, such as dominant colors.",
+        "properties": {
+          "colors": {
+            "description": "RGB components of the color.",
+            "type": "object",
+            "$ref": "#/components/schemas/dominantColors"
+          }
+        }
+      },
+      "Error": {
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "example": 3
+          },
+          "msg": {
+            "type": "string",
+            "enum": [
+              "Bad image data.",
+              "Please provide Basic Authorization using client id and secret given",
+              "Image or features data missing.",
+              "Authentication Failed, Please provide basic token using credentials"
+            ]
+          }
+        }
+      },
+      "Success": {
+        "description": "Response from vision API.",
+        "properties": {
+          "responses": {
+            "type": "object",
+            "properties": {
+              "faceAnnotations": {
+                "type": "object",
+                "$ref": "#/components/schemas/faceAnnotations"
+              },
+              "imagePropertiesAnnotation": {
+                "type": "object",
+                "$ref": "#/components/schemas/imagePropertiesAnnotation"
+              },
+              "labelAnnotations": {
+                "type": "object",
+                "$ref": "#/components/schemas/labelAnnotations"
+              }
+            }
+          }
+        }
+      },
+      "Failure": {
+        "description": "Failure Response from vision API.",
+        "required": [
+          "Error"
+        ],
+        "properties": {
+          "responses": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/images/v1/annotate": {
+      "post": {
+        "tags": [
+          "Vision API"
+        ],
+        "summary": "Run image detection and annotation for a image.",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "features": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "IMAGE_PROPERTIES",
+                        "FACE_DETECTION",
+                        "LABEL_DETECTION"
+                      ]
+                    }
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Image is processed successfully, requested features returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Failure"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Failure"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Failure"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

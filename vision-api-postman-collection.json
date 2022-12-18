@@ -1,0 +1,82 @@
+{
+	"info": {
+		"_postman_id": "78a87463-bcb6-4ca6-837b-fb1794da2fa5",
+		"name": "Viraj-6177-final-project-v2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5645479"
+	},
+	"item": [
+		{
+			"name": "vision-api",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "features",
+							"value": "IMAGE_PROPERTIES",
+							"type": "text"
+						},
+						{
+							"key": "features",
+							"value": "FACE_DETECTION",
+							"type": "text"
+						},
+						{
+							"key": "features",
+							"value": "LABEL_DETECTION",
+							"type": "text"
+						},
+						{
+							"key": "image",
+							"contentType": "image/jpeg",
+							"type": "file",
+							"src": "/Users/viru/code/uncc/itis-6177/final-project/images/image_for_labels.jpeg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://198.199.121.111:3002/api/v1/images/annotate",
+					"protocol": "http",
+					"host": [
+						"198",
+						"199",
+						"121",
+						"111"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"v1",
+						"images",
+						"annotate"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": ""
+		}
+	]
+}

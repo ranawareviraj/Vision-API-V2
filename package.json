@@ -1,0 +1,19 @@
+{
+  "name": "6177-gcp-vision-api",
+  "version": "1.0.0",
+  "description": "6177-gcp-vision-api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/vision": "^3.0.1",
+    "axios": "^1.2.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "swagger-ui-express": "^4.3.0"
+  }
+}
